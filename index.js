@@ -9,16 +9,7 @@ import figlet from 'figlet';
 dotenv.config();
 
 // ASCII 아트 텍스트
-const RAINIT_ASCII = `
- ____                                         __      
-/\  _ \                __              __    /\ \__   
-\ \ \_\ \      __     /\_\     ___    /\_\   \ \ ,_\  
- \ \ ,  /    /'__ \   \/\ \  /' _  \  \/\ \   \ \ \/  
-  \ \ \\ \  /\ \_\.\_  \ \ \ /\ \/\ \  \ \ \   \ \ \_ 
-   \ \_\ \_\\ \__/.\_\  \ \_\\ \_\ \_\  \ \_\   \ \__\
-    \/_/\/ / \/__/\/_/   \/_/ \/_/\/_/   \/_/    \/__/
-
-`;
+const RAINIT_ASCII = ``;
 
 // Rainit 캐릭터 설정
 const RAINIT_PERSONA = `너는 Rainit이라는 이름의 귀여운 우비를 입은 토끼야. 
@@ -40,12 +31,12 @@ class RainitChat {
         this.conversationLog = [];
         this.conversationFile = 'conversation_history.json';
         
-        // Claude API 설정
+        // Claude API 설정 수정
         this.claudeApi = axios.create({
             baseURL: 'https://api.anthropic.com/v1',
             headers: {
                 'Content-Type': 'application/json',
-                'anthropic-version': '2023-06-01',
+                'anthropic-version': '2023-06-01', 
                 'x-api-key': process.env.CLAUDE_API_KEY
             }
         });
@@ -55,7 +46,7 @@ class RainitChat {
         console.clear();
         return new Promise((resolve) => {
             figlet('RAINIT', {
-                font: 'Standard',
+                font: 'Slant Relief',
                 horizontalLayout: 'default',
                 verticalLayout: 'default'
             }, (err, data) => {
@@ -100,23 +91,21 @@ class RainitChat {
                 text: userInput,
                 timestamp: new Date().toISOString()
             });
-
+    
             // Claude API 요청
             const response = await this.claudeApi.post('/messages', {
-                model: 'claude-3-opus-20240229',
-                max_tokens: 1024,
+                model: "claude-3-5-sonnet-20241022",
+                max_tokens: 4096,
                 messages: [
                     {
-                        role: 'system',
-                        content: RAINIT_PERSONA
-                    },
-                    ...this.conversationLog.map(msg => ({
-                        role: msg.sender === 'user' ? 'user' : 'assistant',
-                        content: msg.text
-                    }))
-                ]
+                        role: "user",
+                        content: userInput
+                    }
+                ],
+                system: RAINIT_PERSONA,
+                temperature: 0.7
             });
-
+    
             const rainitResponse = response.data.content[0].text;
             
             // 응답 저장
@@ -125,12 +114,15 @@ class RainitChat {
                 text: rainitResponse,
                 timestamp: new Date().toISOString()
             });
-
+    
             await this.saveConversation();
             return rainitResponse;
-
+    
         } catch (error) {
             console.error('응답 생성 중 오류 발생:', error);
+            if (error.response && error.response.data) {
+                console.error('API 오류 상세:', error.response.data);
+            }
             return '앗, 미안해... 지금은 머리가 좀 복잡한 것 같아... 😅';
         }
     }

@@ -1,0 +1,36 @@
+{
+  "name": "rainit-chat-linux",
+  "version": "1.0.0",
+  "description": "nodejs 기반  \r chat app 시험용",
+  "main": "index.js",
+  "type": "module",
+  "bin": "rainit.js",
+  "scripts": {
+    "start": "node rainit.js",
+    "build": "npm run build:prepare && npm run build:bundle",
+    "build:prepare": "babel src --out-dir dist --copy-files",
+    "build:bundle": "pkg ."
+  },
+  "pkg": {
+    "scripts": "dist/**/*.js",
+    "targets": [
+      "node18-linux-x64"
+    ],
+    "outputPath": "bin",
+    "assets": [
+      "node_modules/figlet/fonts/*"
+    ]
+  },
+  "dependencies": {
+    "axios": "^1.6.2",
+    "chalk": "^5.3.0",
+    "dotenv": "^16.3.1",
+    "figlet": "^1.7.0"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.23.4",
+    "@babel/core": "^7.23.4",
+    "@babel/preset-env": "^7.23.4",
+    "pkg": "^5.8.1"
+  }
+}

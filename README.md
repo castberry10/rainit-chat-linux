@@ -2,7 +2,4 @@
 nodejs 기반  
 chat app 시험용  
 
-![image](https://github.com/user-attachments/assets/e63ba0dc-e65d-4786-8d6a-a48735b3e88e)
-
-
-![image](https://github.com/user-attachments/assets/8492a54a-caa1-4f58-94f9-7e1370050b36)
+![rainit-1](https://github.com/user-attachments/assets/829efde0-2040-4e7b-bb99-5c4ab95f9354)

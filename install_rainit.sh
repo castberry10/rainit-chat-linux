@@ -42,15 +42,21 @@ fi
 echo "📁 설치 디렉토리 준비 중..."
 rm -rf "$INSTALL_DIR"
 mkdir -p "$INSTALL_DIR"
+chown "$REAL_USER:$REAL_USER" "$INSTALL_DIR"
 
-# GitHub 저장소 클론 (실제 사용자 권한으로)
+# GitHub 저장소 클론
 echo "📦 GitHub 저장소 클론 중..."
-if ! sudo -u "$REAL_USER" git clone https://github.com/castberry10/rainit-chat-linux.git "$INSTALL_DIR"; then
+if ! sudo -u "$REAL_USER" git clone https://github.com/castberry10/rainit-chat-linux.git "$INSTALL_DIR/.temp"; then
     echo "❌ GitHub 저장소 클론 실패"
     exit 1
 fi
 
-# npm install 실행 (실제 사용자 권한으로)
+# 클론된 파일 이동
+mv "$INSTALL_DIR/.temp/"* "$INSTALL_DIR/"
+mv "$INSTALL_DIR/.temp/."* "$INSTALL_DIR/" 2>/dev/null || true
+rm -rf "$INSTALL_DIR/.temp"
+
+# npm install 실행
 echo "📚 의존성 패키지 설치 중..."
 cd "$INSTALL_DIR"
 if ! sudo -u "$REAL_USER" npm install; then
@@ -80,7 +86,7 @@ if [ ! -f "$INSTALL_DIR/.env" ]; then
     echo "환경 변수 파일이 생성되었습니다. $INSTALL_DIR/.env 파일에 API 키를 설정해주세요."
 fi
 
-# 권한 설정
+# 권한 설정 최종 확인
 chown -R "$REAL_USER:$REAL_USER" "$INSTALL_DIR"
 
 # 완료 메시지

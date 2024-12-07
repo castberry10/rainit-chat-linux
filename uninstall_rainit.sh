@@ -10,14 +10,19 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
+# 실제 사용자의 홈 디렉토리 경로 설정
+REAL_USER=$SUDO_USER
+REAL_HOME=$(getent passwd "$SUDO_USER" | cut -d: -f6)
+INSTALL_DIR="${REAL_HOME}/.rainit"
+
 echo "🗑️  Rainit 제거를 시작합니다..."
 
 # 실행 중인 프로세스 종료
 echo "🔍 실행 중인 Rainit 프로세스 확인 중..."
-RAINIT_PID=$(pgrep -f "node.*rainit")
+RAINIT_PID=$(pgrep -u "$REAL_USER" -f "node.*rainit")
 if [ ! -z "$RAINIT_PID" ]; then
     echo "⚠️  실행 중인 Rainit 프로세스를 종료합니다..."
-    kill "$RAINIT_PID" 2>/dev/null || true
+    sudo -u "$REAL_USER" kill "$RAINIT_PID" 2>/dev/null || true
     sleep 1
 fi
 
@@ -34,7 +39,6 @@ else
 fi
 
 # 설치 디렉토리 제거
-INSTALL_DIR="$HOME/.rainit"
 if [ -d "$INSTALL_DIR" ]; then
     echo "📁 설치 디렉토리 제거 중..."
     if ! rm -rf "$INSTALL_DIR"; then
@@ -47,21 +51,23 @@ else
 fi
 
 # 대화 기록 파일 제거 여부 확인
-HISTORY_FILE="$HOME/conversation_history.json"
+HISTORY_FILE="${REAL_HOME}/conversation_history.json"
 if [ -f "$HISTORY_FILE" ]; then
-    read -p "💭 대화 기록을 삭제하시겠습니까? (y/N): " choice
-    case "$choice" in 
-        y|Y)
-            if ! rm -f "$HISTORY_FILE"; then
-                echo "⚠️  대화 기록 삭제 실패"
-            else
-                echo "✓ 대화 기록이 삭제되었습니다."
-            fi
-            ;;
-        *)
-            echo "ℹ️  대화 기록이 유지됩니다."
-            ;;
-    esac
+    # sudo로 실행 중이므로 실제 사용자로 권한 변경하여 입력 받기
+    sudo -u "$REAL_USER" bash -c "read -p \"💭 대화 기록을 삭제하시겠습니까? (y/N): \" choice; echo \$choice" | while read choice; do
+        case "$choice" in 
+            y|Y)
+                if ! rm -f "$HISTORY_FILE"; then
+                    echo "⚠️  대화 기록 삭제 실패"
+                else
+                    echo "✓ 대화 기록이 삭제되었습니다."
+                fi
+                ;;
+            *)
+                echo "ℹ️  대화 기록이 유지됩니다."
+                ;;
+        esac
+    done
 fi
 
 echo "✨ Rainit이 성공적으로 제거되었습니다!"

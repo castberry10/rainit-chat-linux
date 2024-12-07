@@ -96,6 +96,7 @@ class RainitChat {
     }
 
     async generateResponse(userInput) {
+        
         try {
             this.conversationLog.push({
                 role: 'user',
@@ -116,7 +117,7 @@ class RainitChat {
             let rainitResponse = '';
             let streamBuffer = '';
 
-            process.stdout.write(chalk.cyan('rainit > '));
+            process.stdout.write(chalk.cyan('\nrainit > '));
 
             for await (const chunk of response.data) {
                 const lines = chunk.toString('utf8').split('\n').filter(line => line.trim());

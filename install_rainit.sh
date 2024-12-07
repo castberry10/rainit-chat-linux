@@ -6,7 +6,7 @@ set -e
 # sudo 권한 체크
 if [ "$EUID" -ne 0 ]; then 
     echo "🔒 이 스크립트는 sudo 권한이 필요합니다."
-    echo "sudo ./build-rainit.sh 로 다시 실행해주세요."
+    echo "sudo ./install-rainit.sh 로 다시 실행해주세요."
     exit 1
 fi
 

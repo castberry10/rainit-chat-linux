@@ -105,6 +105,7 @@ class RainitChat {
 
             const response = await this.claudeApi.post('/messages', {
                 model: 'claude-3-5-sonnet-20241022',
+                // model: 'claude-3-5-haiku-20241022', // 얘가 더 쌈
                 max_tokens: 4096,
                 messages: this.conversationLog,
                 system: RAINIT_PERSONA,

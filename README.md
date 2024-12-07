@@ -23,3 +23,6 @@ sudo ./uninstall_rainit.sh
   
   
 일단 실행하려면 claude api key가 있어야합니다 
+
+
+<img src="https://github.com/user-attachments/assets/621ae8a6-8d1d-4504-a243-296a443dfa48" width="300px">

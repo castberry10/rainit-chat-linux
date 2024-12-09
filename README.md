@@ -19,8 +19,9 @@ rainit
   
 ### 삭제  
 sudo ./uninstall_rainit.sh  
-
   
+  ![image](https://github.com/user-attachments/assets/cc177054-c15a-4bd3-a2c4-6f6f239b9b35)
+
   
 일단 실행하려면 claude api key가 있어야합니다 
 
